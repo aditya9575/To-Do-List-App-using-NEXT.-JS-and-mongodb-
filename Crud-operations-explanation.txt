@@ -1,0 +1,35 @@
+Adding a task 
+[
+    When a user types a task and clicks the "Add Task" button, the addTask function sends a POST request to the /api/tasks endpoint with the task data (including text and dateCreated).
+    In pages/api/tasks.js, the server receives the request, connects to MongoDB, and inserts the new task with an initial status of "active".
+    After a successful response, fetchTasks() is called to refresh the list of tasks.
+]
+
+Fetching a task
+[
+    On page load or after specific actions, fetchTasks sends a GET request to /api/tasks?status=active (or status=completed in completedtasks.js) to retrieve tasks based on their status.
+    In pages/api/tasks.js, the API filters tasks by status (active or completed) and returns them as a JSON response.
+    The fetched tasks are then displayed on the page by updating the state (setTasks(data.tasks)).
+]
+
+Marking a task complete and Marking it as not complete
+[
+    When the "Complete" button is clicked on a task, markTaskComplete sends a PATCH request to update the task’s status to completed.
+    If a task needs to be reverted to active, markAsNotCompleted (from the completedtasks.js page) sends a PATCH request to update the task status back to active.
+    The server handler in pages/api/tasks.js updates the task’s status field in MongoDB using the updateOne method, depending on whether the request is marking a task as complete or active.
+]
+
+Deleting a task 
+[
+    When the "Delete" button is clicked, deleteTask sends a DELETE request to /api/tasks?id=${id}, specifying the task’s _id.
+    In pages/api/tasks.js, the DELETE request is handled by calling MongoDB's deleteOne method, which removes the task with the specified _id from the database.
+    If the deletion is successful, fetchTasks is called to update the list of tasks displayed to the user.
+]
+
+Summary--> 
+The API route in pages/api/tasks.js performs the core CRUD operations by checking the HTTP method (GET, POST, PATCH, or DELETE) and then executing the appropriate MongoDB operation:
+
+GET: Retrieves tasks based on their status (active or completed).
+POST: Adds a new task with text, status, and dateCreated.
+PATCH: Updates the status of a specific task (active or completed).
+DELETE: Deletes a specific task by its _id.
